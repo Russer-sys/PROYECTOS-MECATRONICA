@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakerLab | Registro de Proyectos de Electrónica</title>
-    <!-- Tailwind CSS -->
+    <title>MakerLab | Bitácora de Proyectos</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & JetBrains Mono -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
@@ -24,1915 +21,468 @@
                             900: '#0a0f18',
                             800: '#111827',
                             700: '#1f2937',
-                            accent: '#00d8ff', // Azul Arduino
-                            emerald: '#10b981', // Verde PCB
-                            amber: '#f59e0b'   // Naranja LED
+                            accent: '#00d8ff',
+                            emerald: '#10b981',
+                            amber: '#f59e0b'
                         }
                     }
                 }
             }
         }
     </script>
-    <style>
-        body {
-            background-color: #090d16;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(0, 216, 255, 0.04), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.04), transparent 25%);
-            color: #f3f4f6;
-        }
-        /* Grid pattern sutil estilo placa de pruebas */
-        .bg-grid-pattern {
-            background-size: 24px 24px;
-            background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-        }
-        /* Scrollbar personalizada */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #111827;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00d8ff;
-        }
-    </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans bg-grid-pattern selection:bg-cyan-500 selection:text-slate-950">
+<body class="bg-pcb-900 text-gray-100 min-h-screen font-sans">
 
-    <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
-    <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-            <!-- Logo y Título -->
+    <!-- Barra Superior -->
+    <header class="border-b border-gray-800 bg-pcb-800/80 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 p-0.5 shadow-lg shadow-cyan-500/20">
-                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                        <i data-lucide="cpu" class="w-6 h-6 text-cyan-400"></i>
-                    </div>
+                <div class="p-2 bg-pcb-accent/10 border border-pcb-accent/30 rounded-lg text-pcb-accent">
+                    <i data-lucide="cpu" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-cyan-200 to-emerald-300 bg-clip-text text-transparent">
-                            MakerLab Bitácora
-                        </h1>
-                        <!-- Indicador de estado de Sincronización en la Nube + IndexedDB -->
-                        <span id="sync-badge" class="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-slate-800 text-cyan-300 border border-cyan-500/30 flex items-center gap-1.5">
-                            <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                            <span id="sync-text">Conectando Nube...</span>
-                        </span>
-                    </div>
-                    <p class="text-xs text-slate-400">Sincronización Cloud en tiempo real + Almacenamiento HD sin límite de 5MB</p>
+                    <h1 class="text-xl font-bold tracking-tight">MakerLab <span class="text-pcb-accent font-mono text-sm">Cloud v2.0</span></h1>
+                    <p class="text-xs text-gray-400">Bitácora de Proyectos & Electrónica</p>
                 </div>
             </div>
 
-            <!-- Botones de Acción Rápida, Sincronización PC/Móvil y Respaldo -->
-            <div class="flex items-center flex-wrap gap-2">
-                <!-- Botón para sincronizar entre PC y Celular con Código de Laboratorio -->
-                <button onclick="openCloudSyncModal()" class="flex items-center gap-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-3 py-2 rounded-xl text-xs font-semibold transition">
-                    <i data-lucide="cloud" class="w-4 h-4 text-cyan-400"></i>
-                    <span>Vincular PC / Celular (<span id="current-lab-code" class="font-mono underline">LAB-PRINCIPAL</span>)</span>
+            <div class="flex items-center gap-3 flex-wrap">
+                <!-- Estado de Nube -->
+                <div id="cloud-status" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-xs font-mono">
+                    <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="status-text">Conectando...</span>
+                </div>
+
+                <!-- Código de Laboratorio -->
+                <div class="flex items-center bg-gray-900 border border-gray-700 rounded-lg px-2.5 py-1">
+                    <span class="text-xs text-gray-400 mr-2 font-mono">LAB ID:</span>
+                    <input id="lab-id-input" type="text" value="LAB-PRINCIPAL" 
+                        class="bg-transparent text-xs font-mono text-pcb-accent focus:outline-none w-32 uppercase"
+                        onchange="changeLabId(this.value)">
+                </div>
+
+                <button onclick="openNewProjectModal()" class="flex items-center gap-2 bg-pcb-emerald hover:bg-emerald-600 text-gray-950 font-semibold px-4 py-2 rounded-lg text-sm transition">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Nuevo Proyecto
                 </button>
-
-                <button onclick="openNewProjectModal()" class="flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-slate-950 font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-cyan-500/20 transition transform active:scale-95 text-sm">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                    <span>Nuevo Proyecto</span>
-                </button>
-
-                <div class="h-6 w-[1px] bg-slate-800 mx-1 hidden sm:block"></div>
-
-                <button onclick="exportBackup()" title="Descargar copia de seguridad completa (incluyendo todas las fotos) en un archivo" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-medium transition">
-                    <i data-lucide="download" class="w-4 h-4 text-cyan-400"></i>
-                    <span class="hidden md:inline">Exportar JSON</span>
-                </button>
-
-                <label title="Cargar copia de seguridad guardada" class="cursor-pointer flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-medium transition">
-                    <i data-lucide="upload" class="w-4 h-4 text-emerald-400"></i>
-                    <span class="hidden md:inline">Importar</span>
-                    <input type="file" id="import-json-input" accept=".json" class="hidden" onchange="importBackup(event)">
-                </label>
             </div>
         </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
-
-        <!-- TARJETAS DE ESTADÍSTICAS RÁPIDAS -->
-        <section class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-            <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 flex items-center gap-3.5">
-                <div class="p-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                    <i data-lucide="layers" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-slate-400 font-medium">Total Proyectos</p>
-                    <p id="stat-total" class="text-2xl font-bold text-white font-mono">0</p>
-                </div>
-            </div>
-            <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 flex items-center gap-3.5">
-                <div class="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    <i data-lucide="check-circle-2" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-slate-400 font-medium">Completados</p>
-                    <p id="stat-completed" class="text-2xl font-bold text-emerald-400 font-mono">0</p>
-                </div>
-            </div>
-            <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 flex items-center gap-3.5">
-                <div class="p-3 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                    <i data-lucide="wrench" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-slate-400 font-medium">En Progreso</p>
-                    <p id="stat-progress" class="text-2xl font-bold text-amber-400 font-mono">0</p>
-                </div>
-            </div>
-            <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 flex items-center gap-3.5">
-                <div class="p-3 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                    <i data-lucide="history" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-slate-400 font-medium">Actualizaciones</p>
-                    <p id="stat-updates" class="text-2xl font-bold text-purple-400 font-mono">0</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- BARRA DE BÚSQUEDA Y FILTROS DE CLASIFICACIÓN -->
-        <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-4 shadow-xl">
-            <div class="flex flex-col md:flex-row gap-3 justify-between">
-                <!-- Buscador -->
-                <div class="relative flex-1">
-                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-                    <input 
-                        type="text" 
-                        id="search-input" 
-                        oninput="renderProjects()"
-                        placeholder="Buscar por nombre, componente (ej. LDR, Buzzer, LED, ESP32) o nota..." 
-                        class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none transition"
-                    >
-                </div>
-                <!-- Filtro por Estado -->
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-slate-400 whitespace-nowrap"><i data-lucide="activity" class="w-3.5 h-3.5 inline mr-1"></i>Estado:</span>
-                    <select id="status-filter" onchange="renderProjects()" class="bg-slate-950 border border-slate-800 text-slate-200 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-cyan-500">
-                        <option value="Todos">Todos los estados</option>
-                        <option value="Completado">✅ Completado</option>
-                        <option value="En progreso">⚡ En progreso</option>
-                        <option value="Idea / Prototipo">💡 Idea / Prototipo</option>
-                    </select>
-                </div>
+    <!-- Filtros -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div class="flex gap-2 overflow-x-auto pb-1" id="category-filters">
+                <button onclick="filterProjects('Todos')" class="filter-btn active px-3 py-1.5 rounded-lg text-xs font-mono bg-pcb-accent text-gray-950 font-bold">Todos</button>
+                <button onclick="filterProjects('Arduino / ESP32')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-gray-800 text-gray-300 hover:bg-gray-700">Arduino / ESP32</button>
+                <button onclick="filterProjects('Sensores')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-gray-800 text-gray-300 hover:bg-gray-700">Sensores</button>
+                <button onclick="filterProjects(' Mecatrónica')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-gray-800 text-gray-300 hover:bg-gray-700">Mecatrónica</button>
+                <button onclick="filterProjects('Software')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-gray-800 text-gray-300 hover:bg-gray-700">Software</button>
             </div>
 
-            <!-- Botones de Categoría -->
-            <div class="flex items-center gap-2 overflow-x-auto pb-1" id="category-pills">
-                <!-- Se generan dinámicamente -->
-            </div>
-        </section>
-
-        <!-- CUADRÍCULA DE PROYECTOS -->
-        <section id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            <!-- Se renderiza dinámicamente con JS -->
-        </section>
-
-    </main>
-
-    <!-- MODAL DE DETALLES / GESTIÓN COMPLETA DEL PROYECTO (Sin tocar código) -->
-    <div id="project-detail-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto">
-            
-            <!-- Cabecera del Modal -->
-            <div class="px-5 py-4 bg-slate-950 border-b border-slate-800 flex items-start justify-between gap-4">
-                <div class="space-y-1">
-                    <div class="flex flex-wrap items-center gap-2" id="detail-badges"></div>
-                    <h2 id="detail-title" class="text-lg sm:text-xl font-bold text-white"></h2>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <button onclick="openEditCurrentProject()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-medium transition">
-                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                        <span>Editar Datos</span>
-                    </button>
-                    <button onclick="deleteCurrentProject()" class="flex items-center gap-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 px-2.5 py-1.5 rounded-xl text-xs font-medium transition" title="Eliminar Proyecto">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                    </button>
-                    <button onclick="closeDetailModal()" class="p-1.5 text-slate-400 hover:text-white bg-slate-800/60 rounded-xl">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Pestañas dentro del Proyecto -->
-            <div class="flex border-b border-slate-800 bg-slate-950/50 px-5 gap-2 overflow-x-auto text-xs sm:text-sm">
-                <button onclick="switchDetailTab('overview')" id="tab-btn-overview" class="py-3 px-3 font-medium border-b-2 border-cyan-400 text-cyan-400 flex items-center gap-1.5 whitespace-nowrap">
-                    <i data-lucide="file-text" class="w-4 h-4"></i> Explicación y Notas
+            <div class="flex gap-2">
+                <button onclick="exportBackup()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Respaldo JSON
                 </button>
-                <button onclick="switchDetailTab('updates')" id="tab-btn-updates" class="py-3 px-3 font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 whitespace-nowrap">
-                    <i data-lucide="git-commit" class="w-4 h-4"></i> Bitácora de Avances <span id="detail-updates-count" class="ml-1 px-1.5 py-0.2 bg-slate-800 text-cyan-400 rounded-full text-xs">0</span>
-                </button>
-                <button onclick="switchDetailTab('photos')" id="tab-btn-photos" class="py-3 px-3 font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 whitespace-nowrap">
-                    <i data-lucide="image" class="w-4 h-4"></i> Fotos del Circuito <span id="detail-photos-count" class="ml-1 px-1.5 py-0.2 bg-slate-800 text-emerald-400 rounded-full text-xs">0</span>
-                </button>
-                <button onclick="switchDetailTab('code')" id="tab-btn-code" class="py-3 px-3 font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 whitespace-nowrap">
-                    <i data-lucide="code-2" class="w-4 h-4"></i> Código / Sketch
-                </button>
-            </div>
-
-            <!-- Cuerpo del Modal -->
-            <div class="p-5 overflow-y-auto space-y-6 flex-1">
-                
-                <!-- PESTAÑA 1: EXPLICACIÓN, COMPONENTES Y NOTAS DIRECTAS -->
-                <div id="tab-content-overview" class="space-y-5">
-                    
-                    <!-- Explicación Técnica Editable -->
-                    <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-xs font-semibold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
-                                <i data-lucide="cpu" class="w-4 h-4"></i> Explicación del Funcionamiento
-                            </h3>
-                            <button onclick="toggleQuickEditExplanation()" class="text-xs text-cyan-400 hover:underline flex items-center gap-1">
-                                <i data-lucide="pen-line" class="w-3.5 h-3.5"></i> Editar explicación
-                            </button>
-                        </div>
-                        <p id="detail-explanation" class="text-sm text-slate-200 leading-relaxed whitespace-pre-line"></p>
-                        
-                        <!-- Editor rápido de explicación sin abrir otro modal -->
-                        <div id="quick-explanation-editor" class="hidden mt-3 space-y-2">
-                            <textarea id="quick-explanation-textarea" rows="4" class="w-full bg-slate-900 border border-cyan-500/50 rounded-xl p-3 text-sm text-white focus:outline-none"></textarea>
-                            <div class="flex justify-end gap-2">
-                                <button onclick="toggleQuickEditExplanation()" class="px-3 py-1.5 text-xs bg-slate-800 text-slate-300 rounded-lg">Cancelar</button>
-                                <button onclick="saveQuickExplanation()" class="px-3 py-1.5 text-xs bg-cyan-500 text-slate-950 font-semibold rounded-lg">Guardar Explicación</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Componentes y Materiales -->
-                    <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-xs font-semibold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                                <i data-lucide="microchip" class="w-4 h-4"></i> Componentes y Materiales Utilizados
-                            </h3>
-                        </div>
-                        <div id="detail-components" class="flex flex-wrap gap-2 mb-3"></div>
-                        <!-- Añadir componente rápido -->
-                        <div class="flex gap-2 mt-2">
-                            <input type="text" id="quick-component-input" placeholder="Añadir componente (ej. Resistencia 220Ω, Cable puente...)" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-                            <button onclick="addQuickComponent()" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition">
-                                + Añadir
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Notas de Laboratorio y Observaciones -->
-                    <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-xs font-semibold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                                <i data-lucide="sticky-note" class="w-4 h-4"></i> Notas Personales / Conexiones de Pines
-                            </h3>
-                            <span class="text-[11px] text-slate-400">Puedes escribir aquí directamente y pulsar Guardar</span>
-                        </div>
-                        <textarea id="detail-notes-textarea" rows="4" placeholder="Escribe aquí tus notas, qué pines conectaste (ej. Pin A0 a LDR, Pin 8 a Buzzer), qué falló o qué quieres mejorar..." class="w-full bg-slate-900/90 border border-slate-800 focus:border-amber-500/60 rounded-xl p-3 text-sm text-slate-200 focus:outline-none transition"></textarea>
-                        <div class="flex justify-end mt-2">
-                            <button onclick="saveDirectNotes()" class="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold px-4 py-1.5 rounded-lg text-xs transition">
-                                <i data-lucide="save" class="w-3.5 h-3.5"></i> Guardar Notas
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PESTAÑA 2: BITÁCORA DE ACTUALIZACIONES / AVANCES -->
-                <div id="tab-content-updates" class="hidden space-y-5">
-                    <!-- Formulario rápido para subir una actualización -->
-                    <div class="bg-slate-950 border border-cyan-500/30 rounded-xl p-4 space-y-3">
-                        <h4 class="text-sm font-semibold text-cyan-400 flex items-center gap-2">
-                            <i data-lucide="plus-square" class="w-4 h-4"></i> Registrar Nueva Actualización o Avance
-                        </h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <div class="sm:col-span-2">
-                                <input type="text" id="update-title-input" placeholder="Título del avance (ej. Calibración del sensor LDR, Cambio de resistencia...)" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
-                            </div>
-                            <div>
-                                <select id="update-tag-input" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500">
-                                    <option value="Avance">🚀 Avance de Circuito</option>
-                                    <option value="Mejora Código">💻 Mejora de Código</option>
-                                    <option value="Corrección">🔧 Corrección de Error</option>
-                                    <option value="Prueba">🔬 Prueba Exitosa</option>
-                                </select>
-                            </div>
-                        </div>
-                        <textarea id="update-desc-input" rows="3" placeholder="Explica qué hiciste hoy en este proyecto, qué cambios conectaste en la protoboard o cómo funcionó..." class="w-full bg-slate-900 border border-slate-800 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-cyan-500"></textarea>
-                        
-                        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
-                            <!-- Foto opcional en el avance -->
-                            <div class="flex items-center gap-2">
-                                <label class="cursor-pointer inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium transition">
-                                    <i data-lucide="camera" class="w-3.5 h-3.5"></i>
-                                    <span id="update-photo-label">Adjuntar foto al avance (Opcional)</span>
-                                    <input type="file" id="update-photo-input" accept="image/*" class="hidden" onchange="previewUpdatePhoto(event)">
-                                </label>
-                                <button id="clear-update-photo-btn" onclick="clearUpdatePhoto()" class="hidden text-xs text-rose-400 hover:underline">Quitar foto</button>
-                            </div>
-
-                            <button onclick="addProjectUpdate()" class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold px-4 py-2 rounded-xl text-xs transition">
-                                <i data-lucide="send" class="w-3.5 h-3.5"></i> Publicar en la Bitácora
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Línea de tiempo de actualizaciones -->
-                    <div id="detail-updates-timeline" class="space-y-3 pl-2">
-                        <!-- Se llena con JS -->
-                    </div>
-                </div>
-
-                <!-- PESTAÑA 3: GALERÍA DE FOTOS REALES DEL PROYECTO (SOPORTE >5MB + CHUNKING CLOUD) -->
-                <div id="tab-content-photos" class="hidden space-y-5">
-                    <div class="bg-slate-950 border border-emerald-500/30 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div class="space-y-1">
-                            <h4 class="text-sm font-semibold text-emerald-400 flex items-center gap-2">
-                                <i data-lucide="camera" class="w-4 h-4"></i> Galería de Alta Capacidad (Fotos >5MB, 8MB o 12MB)
-                            </h4>
-                            <p class="text-xs text-slate-400">Puedes seleccionar varias fotos pesadas de tu cámara a la vez. El motor HD las optimiza y las fragmenta automáticamente en la nube e IndexedDB para que nunca tengas límite de 5MB.</p>
-                            <div class="flex items-center gap-3 pt-1">
-                                <label class="text-[11px] text-slate-300 flex items-center gap-1.5">
-                                    Calidad HD:
-                                    <select id="photo-quality-select" class="bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-emerald-400 font-mono">
-                                        <option value="1600">Ultra HD (1600px)</option>
-                                        <option value="1280" selected>Alta Definición (1280px - Recomendado)</option>
-                                        <option value="900">Ligera / Rápida (900px)</option>
-                                    </select>
-                                </label>
-                                <span id="photo-upload-status" class="text-[11px] font-mono text-cyan-400"></span>
-                            </div>
-                        </div>
-                        <label class="cursor-pointer shrink-0 flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-4 py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-500/10 transition">
-                            <i data-lucide="upload-cloud" class="w-4 h-4"></i>
-                            <span>Subir Fotos (Múltiples)</span>
-                            <input type="file" accept="image/*" multiple class="hidden" onchange="handlePhotoUpload(event)">
-                        </label>
-                    </div>
-
-                    <!-- Cuadrícula de Fotos -->
-                    <div id="detail-photos-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Se llena con JS -->
-                    </div>
-                </div>
-
-                <!-- PESTAÑA 4: BLOQUE DE CÓDIGO (ARDUINO / C++ / PYTHON) -->
-                <div id="tab-content-code" class="hidden space-y-4">
-                    <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-950 border border-slate-800 px-4 py-3 rounded-xl">
-                        <div>
-                            <h4 class="text-xs font-semibold uppercase tracking-wider text-cyan-400">Sketch / Código del Microcontrolador</h4>
-                            <p class="text-xs text-slate-400">Pega o edita aquí el código que subiste a tu placa para no perderlo.</p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button onclick="copyProjectCode()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-700">
-                                <i data-lucide="copy" class="w-3.5 h-3.5 text-cyan-400"></i> Copiar Código
-                            </button>
-                            <button onclick="saveProjectCode()" class="flex items-center gap-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold px-3 py-1.5 rounded-lg text-xs">
-                                <i data-lucide="save" class="w-3.5 h-3.5"></i> Guardar Código
-                            </button>
-                        </div>
-                    </div>
-                    <textarea id="detail-code-textarea" rows="13" spellcheck="false" placeholder="// Pega aquí tu código de Arduino IDE (void setup, void loop...)" class="w-full font-mono text-xs sm:text-sm bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl p-4 text-emerald-300 focus:outline-none leading-relaxed"></textarea>
-                </div>
-
             </div>
         </div>
-    </div>
 
-    <!-- MODAL PARA CREAR O EDITAR PROYECTO -->
-    <div id="project-form-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 overflow-y-auto">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5 my-auto max-h-[92vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 id="form-modal-title" class="text-lg font-bold text-white flex items-center gap-2">
-                    <i data-lucide="folder-plus" class="w-5 h-5 text-cyan-400"></i>
-                    <span>Nuevo Proyecto de Laboratorio</span>
-                </h3>
-                <button onclick="closeFormModal()" class="text-slate-400 hover:text-white p-1">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
+        <!-- Grid de Proyectos -->
+        <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </main>
+
+    <!-- Modal Nuevo / Editar Proyecto -->
+    <div id="project-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-pcb-800 border border-gray-700 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="modal-title" class="text-lg font-bold text-pcb-accent font-mono">Nuevo Proyecto</h2>
+                <button onclick="closeProjectModal()" class="text-gray-400 hover:text-white"><i data-lucide="x"></i></button>
             </div>
 
-            <form id="project-form" onsubmit="saveProjectForm(event)" class="space-y-4">
-                <input type="hidden" id="form-project-id">
-                
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Nombre del Proyecto *</label>
-                    <input type="text" id="form-title" required placeholder="Ej. Alarma con Sensor Ultrasónico, Reloj con ESP32..." class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
-                </div>
-
+            <form id="project-form" onsubmit="saveProjectFromModal(event)" class="space-y-4">
+                <input type="hidden" id="proj-id">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Categoría / Clasificación *</label>
-                        <select id="form-category" class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
-                            <option value="Arduino">Arduino</option>
-                            <option value="ESP32">ESP32</option>
-                            <option value="Soldadura">Soldadura</option>
-                            <option value="Python/Software">Python/Software</option>
-                        </select>
+                        <label class="block text-xs text-gray-400 mb-1">Nombre del Proyecto</label>
+                        <input type="text" id="proj-title" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:border-pcb-accent focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Estado Actual *</label>
-                        <select id="form-status" class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
-                            <option value="Completado">✅ Completado (Funcional)</option>
-                            <option value="En progreso">⚡ En progreso (Armando/Probando)</option>
-                            <option value="Idea / Prototipo">💡 Idea / Prototipo</option>
+                        <label class="block text-xs text-gray-400 mb-1">Categoría</label>
+                        <select id="proj-category" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:border-pcb-accent focus:outline-none">
+                            <option value="Arduino / ESP32">Arduino / ESP32</option>
+                            <option value="Sensores">Sensores</option>
+                            <option value="Mecatrónica">Mecatrónica</option>
+                            <option value="Software">Software</option>
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Componentes separados por coma</label>
-                    <input type="text" id="form-components" placeholder="Arduino UNO, Protoboard, LDR, Buzzer, Resistencia 10k, Cables jumper" class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                    <label class="block text-xs text-gray-400 mb-1">Explicación / Funcionamiento</label>
+                    <textarea id="proj-desc" rows="3" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:border-pcb-accent focus:outline-none"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Explicación del Proyecto *</label>
-                    <textarea id="form-explanation" required rows="3" placeholder="Describe cómo funciona el circuito, cuál es su objetivo y cómo interactúan sus partes..." class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl p-3.5 text-sm text-white focus:outline-none"></textarea>
+                    <label class="block text-xs text-gray-400 mb-1">Componentes (separados por coma)</label>
+                    <input type="text" id="proj-components" placeholder="Arduino UNO, LDR, Resistencia 10k, Buzzer..." class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:border-pcb-accent focus:outline-none">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Notas de Conexión / Observaciones</label>
-                    <textarea id="form-notes" rows="2" placeholder="Ej. Pin A0 para lectura analógica, cuidado con la polaridad del buzzer..." class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl p-3.5 text-sm text-white focus:outline-none"></textarea>
+                    <label class="block text-xs text-gray-400 mb-1">Notas Técnicas / Código Arduino</label>
+                    <textarea id="proj-notes" rows="4" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-xs font-mono focus:border-pcb-accent focus:outline-none"></textarea>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-3 border-t border-slate-800">
-                    <button type="button" onclick="closeFormModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-slate-950 font-semibold text-sm shadow-lg shadow-cyan-500/20">
-                        Guardar Proyecto
-                    </button>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeProjectModal()" class="px-4 py-2 rounded-lg bg-gray-700 text-sm">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-pcb-accent text-gray-950 font-bold text-sm">Guardar en la Nube</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL DE SINCRONIZACIÓN EN LA NUBE (VINCULAR PC Y CELULAR) -->
-    <div id="cloud-sync-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-cyan-500/40 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                        <i data-lucide="cloud" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-white">Sincronización en la Nube + Multi-Dispositivo</h3>
-                        <p class="text-xs text-slate-400">Conecta tu computadora y tu celular en tiempo real</p>
-                    </div>
-                </div>
-                <button onclick="closeCloudSyncModal()" class="text-slate-400 hover:text-white p-1">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <div class="space-y-4 text-xs sm:text-sm text-slate-300">
-                <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 space-y-2">
-                    <p class="text-xs font-semibold uppercase text-cyan-400">¿Cómo ver tus fotos y proyectos en tu PC y Celular?</p>
-                    <p class="text-xs text-slate-300 leading-relaxed">
-                        Todos tus proyectos y fotos se guardan bajo un <strong>Código de Laboratorio (Workspace ID)</strong> en la nube de Firebase. Si escribes el mismo código en tu celular y en tu computadora, ambos dispositivos mostrarán y actualizarán exactamente las mismas fotos, notas y avances al instante.
-                    </p>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1.5">Tu Código de Laboratorio Actual</label>
-                    <div class="flex gap-2">
-                        <input type="text" id="workspace-id-input" placeholder="Ej. LAB-MARIO-2026" class="flex-1 bg-slate-950 border border-cyan-500/50 rounded-xl px-3.5 py-2 text-sm font-mono uppercase text-cyan-300 focus:outline-none">
-                        <button onclick="changeWorkspaceId()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold px-4 py-2 rounded-xl text-xs transition whitespace-nowrap">
-                            Conectar Código
-                        </button>
-                    </div>
-                    <p class="text-[11px] text-slate-400 mt-1">Puedes inventar tu propio código secreto (ej. <code class="text-emerald-400">MI-LAB-ARDUINO</code>) y ponerlo en ambos dispositivos.</p>
-                </div>
-
-                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 flex items-center justify-between text-xs">
-                    <div>
-                        <span class="text-slate-400 block">ID de Sesión Firebase Auth:</span>
-                        <span id="firebase-uid-display" class="font-mono text-[11px] text-emerald-400 select-all">Conectando...</span>
-                    </div>
-                    <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono text-[11px]">
-                        IndexedDB + Cloud Chunking Activo
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex justify-end pt-2 border-t border-slate-800">
-                <button onclick="closeCloudSyncModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold">
-                    Listo
-                </button>
-            </div>
+    <!-- Modal de Detalles / Bitácora / Subir Avances -->
+    <div id="detail-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-pcb-800 border border-gray-700 rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
+            <div id="detail-content"></div>
         </div>
     </div>
 
-    <!-- NOTIFICACIÓN FLOTANTE (TOAST) -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
-    <!-- LÓGICA DE LA APLICACIÓN, INDEXEDDB ILIMITADO Y SINCRONIZACIÓN FIREBASE CLOUD -->
+    <!-- Firebase SDK + Lógica de Sincronización -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        // Categorías solicitadas
-        const CATEGORIES = [
-            'Todos',
-            'Arduino',
-            'ESP32',
-            'Soldadura',
-            'Python/Software'
-        ];
+        // TUS CREDENCIALES REALES DE FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAFOkNDRozkaDAn6xl2aj4drqoeiFSxgxE",
+            authDomain: "proyectos-mecatronica.firebaseapp.com",
+            projectId: "proyectos-mecatronica",
+            storageBucket: "proyectos-mecatronica.firebasestorage.app",
+            messagingSenderId: "571217118177",
+            appId: "1:571217118177:web:09104120dde19297c008a0",
+            measurementId: "G-Z3KRBGDD88"
+        };
 
-        let selectedCategory = 'Todos';
-        let activeProjectId = null;
-        let pendingUpdatePhotoDataUrl = null;
-        let currentWorkspaceId = 'LAB-PRINCIPAL';
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        // Variables de Firebase
-        let db = null;
-        let auth = null;
-        let currentUser = null;
-        let unsubscribeProjects = null;
-        let unsubscribePhotoChunks = null;
-        let isApplyingRemoteChanges = false;
+        let currentLabId = localStorage.getItem('makerlab_id') || 'LAB-PRINCIPAL';
+        document.getElementById('lab-id-input').value = currentLabId;
 
-        // Mapa en memoria de fotos completas reconstruidas (photoId -> dataUrl)
-        const photoDataCache = new Map();
-        // Mapa temporal para reconstruir fragmentos (chunks) que vienen de Firestore
-        const remotePhotoChunksMap = new Map();
+        let currentFilter = 'Todos';
+        let unsubscribeSnapshot = null;
 
-        // ============================================================================
-        // 1. MOTOR INDEXEDDB PARA ALMACENAR FOTOS DE MÁS DE 5MB SIN LÍMITE EN EL NAVEGADOR
-        // ============================================================================
-        const IDB_NAME = 'MakerLabHighCapacityDB';
-        const IDB_VERSION = 2;
-
-        function openLocalDatabase() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(IDB_NAME, IDB_VERSION);
-                request.onupgradeneeded = (e) => {
-                    const idb = e.target.result;
-                    if (!idb.objectStoreNames.contains('projectsStore')) {
-                        idb.createObjectStore('projectsStore', { keyPath: 'workspaceId' });
-                    }
-                    if (!idb.objectStoreNames.contains('photosStore')) {
-                        idb.createObjectStore('photosStore', { keyPath: 'photoId' });
-                    }
-                };
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        async function savePhotoToIndexedDB(photoId, dataUrl) {
-            photoDataCache.set(photoId, dataUrl);
-            try {
-                const idb = await openLocalDatabase();
-                const tx = idb.transaction('photosStore', 'readwrite');
-                tx.objectStore('photosStore').put({ photoId, dataUrl, updatedAt: Date.now() });
-            } catch (e) {
-                console.warn('No se pudo guardar en IndexedDB:', e);
-            }
-        }
-
-        async function loadAllPhotosFromIndexedDB() {
-            try {
-                const idb = await openLocalDatabase();
-                return new Promise((resolve) => {
-                    const tx = idb.transaction('photosStore', 'readonly');
-                    const req = tx.objectStore('photosStore').getAll();
-                    req.onsuccess = () => {
-                        (req.result || []).forEach(item => {
-                            if (item.photoId && item.dataUrl) {
-                                photoDataCache.set(item.photoId, item.dataUrl);
-                            }
-                        });
-                        resolve();
-                    };
-                    req.onerror = () => resolve();
-                });
-            } catch (e) {
-                console.warn('Error leyendo fotos de IndexedDB:', e);
-            }
-        }
-
-        async function saveProjectsToIndexedDB(workspaceId, projectsList) {
-            try {
-                const idb = await openLocalDatabase();
-                const tx = idb.transaction('projectsStore', 'readwrite');
-                tx.objectStore('projectsStore').put({ workspaceId, projects: projectsList, updatedAt: Date.now() });
-            } catch (e) {
-                console.warn('Error guardando proyectos en IndexedDB:', e);
-            }
-        }
-
-        async function loadProjectsFromIndexedDB(workspaceId) {
-            try {
-                const idb = await openLocalDatabase();
-                return new Promise((resolve) => {
-                    const tx = idb.transaction('projectsStore', 'readonly');
-                    const req = tx.objectStore('projectsStore').get(workspaceId);
-                    req.onsuccess = () => resolve(req.result ? req.result.projects : null);
-                    req.onerror = () => resolve(null);
-                });
-            } catch (e) {
-                return null;
-            }
-        }
-
-        // ============================================================================
-        // 2. GENERADOR DE ESQUEMAS SVG Y PROYECTOS DE FÁBRICA (TUS 2 CIRCUITOS REALES)
-        // ============================================================================
-        function getCircuitSvgDataUrl(type) {
-            if (type === 'ldr-buzzer') {
-                const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" width="100%" height="100%">
-                    <rect width="600" height="340" fill="#131b2e"/>
-                    <rect x="20" y="20" width="560" height="300" rx="14" fill="#b91c1c" opacity="0.85"/>
-                    <rect x="45" y="60" width="290" height="210" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="3"/>
-                    <line x1="60" y1="80" x2="320" y2="80" stroke="#ef4444" stroke-width="2"/>
-                    <line x1="60" y1="90" x2="320" y2="90" stroke="#3b82f6" stroke-width="2"/>
-                    <line x1="60" y1="240" x2="320" y2="240" stroke="#ef4444" stroke-width="2"/>
-                    <line x1="60" y1="250" x2="320" y2="250" stroke="#3b82f6" stroke-width="2"/>
-                    <circle cx="215" cy="155" r="24" fill="#1e293b" stroke="#0f172a" stroke-width="3"/>
-                    <circle cx="215" cy="155" r="6" fill="#64748b"/>
-                    <ellipse cx="140" cy="135" rx="12" ry="9" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
-                    <path d="M132 135 Q140 128 148 135 Q140 142 132 135" stroke="#78350f" stroke-width="1.5" fill="none"/>
-                    <rect x="115" y="155" width="22" height="7" rx="3" fill="#38bdf8" stroke="#0284c7"/>
-                    <rect x="360" y="85" width="185" height="165" rx="6" fill="#0284c7" stroke="#0369a1" stroke-width="3"/>
-                    <rect x="345" y="105" width="28" height="36" rx="3" fill="#94a3b8"/>
-                    <rect x="420" y="175" width="85" height="24" rx="2" fill="#1e293b"/>
-                    <text x="455" y="135" fill="#e0f2fe" font-family="monospace" font-weight="bold" font-size="15">ARDUINO</text>
-                    <text x="475" y="153" fill="#ffffff" font-family="monospace" font-weight="bold" font-size="13">UNO</text>
-                    <path d="M145 140 C 200 30, 390 40, 445 235" stroke="#22c55e" stroke-width="4" fill="none" stroke-linecap="round"/>
-                    <path d="M215 140 C 260 40, 430 40, 490 95" stroke="#ef4444" stroke-width="4" fill="none" stroke-linecap="round"/>
-                    <path d="M155 150 C 230 60, 370 70, 425 235" stroke="#3b82f6" stroke-width="4" fill="none" stroke-linecap="round"/>
-                    <rect x="40" y="280" width="520" height="30" rx="6" fill="#090d16" opacity="0.75"/>
-                    <text x="55" y="300" fill="#38bdf8" font-family="sans-serif" font-size="13" font-weight="bold">Proyecto 1: Detector de Luz con LDR y Buzzer (Sube tus fotos en la pestaña Fotos)</text>
-                </svg>`;
-                return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-            } else {
-                const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" width="100%" height="100%">
-                    <rect width="600" height="340" fill="#1c1917"/>
-                    <rect x="20" y="20" width="560" height="300" rx="14" fill="#c2410c" opacity="0.85"/>
-                    <rect x="55" y="45" width="240" height="235" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="3"/>
-                    <circle cx="195" cy="120" r="22" fill="#ef4444" opacity="0.35"/>
-                    <circle cx="195" cy="120" r="10" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
-                    <rect x="183" y="175" width="24" height="24" rx="3" fill="#334155" stroke="#0f172a" stroke-width="2"/>
-                    <circle cx="195" cy="187" r="7" fill="#0f172a"/>
-                    <rect x="345" y="85" width="185" height="165" rx="6" fill="#0284c7" stroke="#0369a1" stroke-width="3"/>
-                    <circle cx="490" cy="145" r="5" fill="#fde047"/>
-                    <circle cx="490" cy="185" r="5" fill="#22c55e"/>
-                    <text x="415" y="145" fill="#e0f2fe" font-family="monospace" font-weight="bold" font-size="15">ARDUINO UNO</text>
-                    <path d="M200 115 C 240 20, 480 20, 515 155" stroke="#eab308" stroke-width="4" fill="none" stroke-linecap="round"/>
-                    <path d="M205 187 C 275 110, 420 110, 465 195" stroke="#eab308" stroke-width="4" fill="none" stroke-linecap="round"/>
-                    <path d="M195 200 C 230 280, 450 280, 435 160" stroke="#ef4444" stroke-width="4" fill="none" stroke-linecap="round"/>
-                    <rect x="40" y="285" width="520" height="28" rx="6" fill="#090d16" opacity="0.75"/>
-                    <text x="55" y="304" fill="#fde047" font-family="sans-serif" font-size="13" font-weight="bold">Proyecto 2: Control de LED Rojo con Botón Pulsador (Sube tus fotos aquí)</text>
-                </svg>`;
-                return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-            }
-        }
-
-        const INITIAL_PROJECTS = [
+        // Proyectos iniciales basados en tus fotos de Arduino UNO[cite: 1, 2, 3, 4, 5]
+        const defaultProjects = [
             {
-                id: 'proj-ldr-buzzer-1',
-                title: 'Detector de Luz con LDR y Buzzer (Arduino UNO)',
-                category: 'Arduino',
-                status: 'Completado',
-                createdAt: '06 Nov 2026',
-                components: [
-                    'Arduino UNO',
-                    'Fotoresistencia LDR',
-                    'Buzzer pasivo',
-                    'Resistencia 10k',
-                    'Protoboard',
-                    'Jumpers'
-                ],
-                explanation: 'Circuito detector de nivel de iluminación montado sobre protoboard y gobernado por un Arduino UNO. La fotoresistencia (LDR) forma un divisor de tensión con la resistencia de 10k, enviando una señal analógica al pin de entrada (ANALOG IN) del Arduino.\n\nCuando la cantidad de luz cambia y supera (o baja de) el umbral programado, el Arduino activa la salida digital conectada al buzzer pasivo para emitir una alerta sonora.',
-                notes: '• Fotos 1, 2 y 3 tomadas sobre el cuaderno rojo.\n• El cable verde lleva la lectura del divisor de tensión de la LDR hacia los pines ANALOG IN del Arduino UNO.\n• El buzzer tiene polaridad: el cable rojo va al positivo y de ahí al pin digital de control.',
-                code: `// Sketch: Detector de Luz con LDR y Buzzer en Arduino UNO
-const int pinLDR = A0;      // Pin analógico conectado a la Fotoresistencia (LDR)
-const int pinBuzzer = 8;    // Pin digital conectado al Buzzer pasivo
-int umbralLuz = 450;        // Ajustar según la luz del cuarto (0 a 1023)
-
-void setup() {
-  Serial.begin(9600);
-  pinMode(pinBuzzer, OUTPUT);
-}
-
-void loop() {
-  int valorLuz = analogRead(pinLDR);
-  Serial.print("Nivel de luz detectado: ");
-  Serial.println(valorLuz);
-
-  // Si el nivel de luz baja del umbral, suena la alarma
-  if (valorLuz < umbralLuz) {
-    tone(pinBuzzer, 1000); // Activa tono en buzzer pasivo
-  } else {
-    noTone(pinBuzzer);     // Apaga el buzzer
-  }
-  delay(100);
-}`,
-                photos: [
-                    {
-                        id: 'img-default-ldr',
-                        caption: 'Esquema del montaje sobre cuaderno rojo (Pulsa "Subir Fotos" para añadir tus fotos reales de la galería)',
-                        dataUrl: getCircuitSvgDataUrl('ldr-buzzer'),
-                        date: '06 Nov 2026'
-                    }
-                ],
-                updates: [
-                    {
-                        id: 'upd-101',
-                        date: '06 Nov 2026 - 18:30',
-                        tag: 'Prueba',
-                        title: 'Montaje completo en protoboard y prueba de sonido',
-                        description: 'Se armó el divisor de tensión con la fotoresistencia (LDR) y la resistencia de 10k en la protoboard. Se conectó el buzzer pasivo con cables rojo y verde hacia el Arduino UNO.'
-                    }
+                id: 'proj-ldr-buzzer',
+                title: 'Detector de Luz con LDR y Buzzer',
+                category: 'Sensores',
+                desc: 'Circuito en protoboard con Arduino UNO que mide la intensidad luminosa mediante una fotorresistencia (LDR) y activa una alarma sonora en el buzzer.', //[cite: 1, 2, 3]
+                components: ['Arduino UNO', 'Protoboard', 'LDR (Fotorresistencia)', 'Buzzer Activo', 'Resistencia 10kΩ', 'Cables Jumper'], //[cite: 1, 2, 3]
+                notes: 'void setup() {\n  pinMode(A5, INPUT);\n  pinMode(8, OUTPUT);\n}\nvoid loop() {\n  int luz = analogRead(A5);\n  if(luz < 400) digitalWrite(8, HIGH);\n  else digitalWrite(8, LOW);\n}', //[cite: 3]
+                images: [],
+                logs: [
+                    { date: new Date().toLocaleDateString(), text: 'Montaje inicial en protoboard sobre cuaderno de trabajo.' } //[cite: 1, 2]
                 ]
             },
             {
-                id: 'proj-led-button-2',
-                title: 'Control de LED Rojo con Botón Pulsador (Push Button)',
-                category: 'Arduino',
-                status: 'Completado',
-                createdAt: '06 Nov 2026',
-                components: [
-                    'Arduino UNO',
-                    'LED Rojo',
-                    'Push Button',
-                    'Resistencias 220 y 10k ohm',
-                    'Protoboard'
-                ],
-                explanation: 'Sistema de control digital de entrada y salida con Arduino UNO. Utiliza un botón pulsador táctil (Push Button) en la protoboard con su resistencia de 10k ohm para leer el estado lógico sin ruido.\n\nAl presionar el botón, el circuito enciende el LED Rojo protegido por una resistencia de 220 ohm.',
-                notes: '• Fotos 4 y 5 tomadas sobre la mesa naranja (con el LED rojo encendido en la foto 4 y apagado en reposo en la foto 5).\n• Cable amarillo largo conecta el pin digital de salida hacia el ánodo del LED.\n• Verificar siempre que las patas del push button estén bien insertadas en el canal central de la protoboard.',
-                code: `// Sketch: Control de LED Rojo con Botón Pulsador (Push Button)
-const int pinBoton = 2;     // Pin digital de entrada para el Push Button
-const int pinLED = 13;      // Pin digital de salida para el LED Rojo
-
-int estadoBoton = 0;
-
-void setup() {
-  pinMode(pinLED, OUTPUT);
-  pinMode(pinBoton, INPUT);
-}
-
-void loop() {
-  estadoBoton = digitalRead(pinBoton);
-
-  // Si se presiona el botón pulsador, encendemos el LED rojo
-  if (estadoBoton == HIGH) {
-    digitalWrite(pinLED, HIGH);
-  } else {
-    digitalWrite(pinLED, LOW);
-  }
-}`,
-                photos: [
-                    {
-                        id: 'img-default-led',
-                        caption: 'Vista del LED rojo encendido al presionar el pulsador en la protoboard (Sube tus fotos reales aquí)',
-                        dataUrl: getCircuitSvgDataUrl('led-button'),
-                        date: '06 Nov 2026'
-                    }
-                ],
-                updates: [
-                    {
-                        id: 'upd-201',
-                        date: '06 Nov 2026 - 19:00',
-                        tag: 'Prueba',
-                        title: 'Prueba exitosa de encendido y apagado del LED rojo',
-                        description: 'Se documentaron los dos estados del circuito en la mesa de trabajo: estado apagado (reposo) y estado encendido con el LED rojo iluminando al activar el Push Button.'
-                    }
+                id: 'proj-led-boton',
+                title: 'Control de LED Rojo con Push Button',
+                category: 'Arduino / ESP32',
+                desc: 'Circuito de control digital con botón pulsador en configuración pull-down y resistencia limitadora para encender un LED rojo de alto brillo.', //[cite: 4, 5]
+                components: ['Arduino UNO', 'LED Rojo', 'Push Button', 'Resistencias 220Ω y 10kΩ', 'Protoboard'], //[cite: 4, 5]
+                notes: ' Lectura de estado digital del botón para conmutar la salida del LED.',
+                images: [],
+                logs: [
+                    { date: new Date().toLocaleDateString(), text: 'Prueba de encendido de LED rojo superada.' } //[cite: 4]
                 ]
             }
         ];
 
         let projects = [];
 
-        // ============================================================================
-        // 3. SINCRONIZACIÓN EN LA NUBE CON FIREBASE (FIRESTORE + CHUNKING DE FOTOS)
-        // ============================================================================
-        function updateSyncStatusUI(state, message) {
-            const dot = document.getElementById('sync-dot');
-            const text = document.getElementById('sync-text');
-            if (!dot || !text) return;
-
-            text.textContent = message;
-            if (state === 'synced') {
-                dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
-            } else if (state === 'saving') {
-                dot.className = 'w-2 h-2 rounded-full bg-cyan-400 animate-ping';
-            } else if (state === 'local') {
-                dot.className = 'w-2 h-2 rounded-full bg-amber-400';
-            }
+        function setStatus(online, text) {
+            const dot = document.getElementById('status-dot');
+            const label = document.getElementById('status-text');
+            dot.className = online ? 'w-2.5 h-2.5 rounded-full bg-emerald-400' : 'w-2.5 h-2.5 rounded-full bg-red-500';
+            label.textContent = text;
         }
 
-        function getWorkspacePrefix() {
-            return currentWorkspaceId.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '') || 'LAB-PRINCIPAL';
-        }
+        // Conectar y escuchar cambios en tiempo real desde Firestore
+        function subscribeToCloud(labId) {
+            if (unsubscribeSnapshot) unsubscribeSnapshot();
+            setStatus(false, 'Sincronizando...');
 
-        async function initFirebaseCloud() {
-            try {
-                if (typeof __firebase_config === 'undefined' || !__firebase_config) {
-                    updateSyncStatusUI('local', 'Guardado IndexedDB (>5MB)');
-                    return;
-                }
-
-                const firebaseConfig = JSON.parse(__firebase_config);
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                // Regla 3: Autenticar primero antes de cualquier operación en Firestore
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                onAuthStateChanged(auth, (user) => {
-                    currentUser = user;
-                    if (user) {
-                        const uidEl = document.getElementById('firebase-uid-display');
-                        if (uidEl) uidEl.textContent = user.uid;
-                        subscribeToCloudWorkspace();
-                    }
-                });
-            } catch (err) {
-                console.warn('Operando en modo IndexedDB local de alta capacidad:', err);
-                updateSyncStatusUI('local', 'Guardado Local HD Activo');
-            }
-        }
-
-        // Suscripción en tiempo real a los proyectos y a los fragmentos de fotos en Firestore
-        function subscribeToCloudWorkspace() {
-            if (!currentUser || !db) return;
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const prefix = getWorkspacePrefix();
-
-            if (unsubscribeProjects) unsubscribeProjects();
-            if (unsubscribePhotoChunks) unsubscribePhotoChunks();
-
-            updateSyncStatusUI('saving', 'Sincronizando Nube...');
-
-            // Escuchar fragmentos de fotos pesadas (Chunking en Firestore)
-            const chunksCol = collection(db, 'artifacts', appId, 'public', 'data', 'makerlab_photo_chunks');
-            unsubscribePhotoChunks = onSnapshot(chunksCol, (snapshot) => {
-                snapshot.docChanges().forEach(change => {
-                    const data = change.doc.data();
-                    if (!data || data.workspaceId !== prefix) return;
-
-                    if (change.type === 'removed') {
-                        remotePhotoChunksMap.delete(change.doc.id);
-                    } else {
-                        remotePhotoChunksMap.set(change.doc.id, data);
-                        reconstructPhotoFromChunks(data.photoId, data.totalChunks);
-                    }
-                });
-            }, (err) => {
-                console.warn('Error en listener de fragmentos de fotos:', err);
-            });
-
-            // Escuchar documentos de proyectos
-            const projectsCol = collection(db, 'artifacts', appId, 'public', 'data', 'makerlab_projects');
-            unsubscribeProjects = onSnapshot(projectsCol, async (snapshot) => {
-                const cloudProjects = [];
-                snapshot.forEach(docSnap => {
+            const docRef = doc(db, "laboratorios", labId);
+            unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
                     const data = docSnap.data();
-                    if (data && data.workspaceId === prefix && data.projectData) {
-                        try {
-                            const parsed = JSON.parse(data.projectData);
-                            cloudProjects.push(parsed);
-                        } catch (e) {}
-                    }
-                });
-
-                if (cloudProjects.length > 0) {
-                    isApplyingRemoteChanges = true;
-                    // Rehidratar fotos desde la caché en memoria o IndexedDB
-                    cloudProjects.forEach(p => {
-                        (p.photos || []).forEach(ph => {
-                            if (photoDataCache.has(ph.id)) {
-                                ph.dataUrl = photoDataCache.get(ph.id);
-                            }
-                        });
-                        (p.updates || []).forEach(u => {
-                            if (u.photoId && photoDataCache.has(u.photoId)) {
-                                u.photoDataUrl = photoDataCache.get(u.photoId);
-                            }
-                        });
-                    });
-
-                    projects = cloudProjects;
-                    await saveProjectsToIndexedDB(prefix, projects);
+                    projects = data.projects || [];
+                    setStatus(true, 'Nube Conectada');
                     renderProjects();
-                    if (activeProjectId) {
-                        const activeProj = projects.find(p => p.id === activeProjectId);
-                        if (activeProj) {
-                            renderDetailComponents(activeProj);
-                            renderDetailUpdates(activeProj);
-                            renderDetailPhotos(activeProj);
-                        }
-                    }
-                    isApplyingRemoteChanges = false;
-                    updateSyncStatusUI('synced', 'Sincronizado en la Nube');
                 } else {
-                    // Si este espacio en la nube aún está vacío, subimos nuestros proyectos actuales
-                    await syncAllProjectsToCloud();
-                    updateSyncStatusUI('synced', 'Sincronizado en la Nube');
+                    // Si la base está vacía, sube los proyectos iniciales automáticamente
+                    projects = defaultProjects;
+                    pushToCloud();
                 }
-            }, (err) => {
-                console.warn('Error en listener de proyectos:', err);
-                updateSyncStatusUI('local', 'Guardado Local HD');
+            }, (error) => {
+                console.error("Error de Firestore:", error);
+                setStatus(false, 'Error Reglas Firestore');
             });
         }
 
-        // Reconstruye una foto de alta resolución a partir de sus fragmentos en Firestore
-        function reconstructPhotoFromChunks(photoId, totalChunks) {
-            const prefix = getWorkspacePrefix();
-            const chunks = [];
-            for (let i = 0; i < totalChunks; i++) {
-                const chunkDocId = `${prefix}_${photoId}_chunk_${i}`;
-                const chunkObj = remotePhotoChunksMap.get(chunkDocId);
-                if (!chunkObj) return; // Aún faltan fragmentos por llegar
-                chunks.push(chunkObj.dataSlice);
-            }
-            const fullDataUrl = chunks.join('');
-            savePhotoToIndexedDB(photoId, fullDataUrl);
-
-            // Actualizar vistas si la foto pertenece a algún proyecto en pantalla
-            let updatedAny = false;
-            projects.forEach(p => {
-                (p.photos || []).forEach(ph => {
-                    if (ph.id === photoId && ph.dataUrl !== fullDataUrl) {
-                        ph.dataUrl = fullDataUrl;
-                        updatedAny = true;
-                    }
-                });
-                (p.updates || []).forEach(u => {
-                    if (u.photoId === photoId && u.photoDataUrl !== fullDataUrl) {
-                        u.photoDataUrl = fullDataUrl;
-                        updatedAny = true;
-                    }
-                });
-            });
-
-            if (updatedAny) {
-                renderProjects();
-                if (activeProjectId) {
-                    const activeProj = projects.find(p => p.id === activeProjectId);
-                    if (activeProj) {
-                        renderDetailPhotos(activeProj);
-                        renderDetailUpdates(activeProj);
-                    }
-                }
-            }
-        }
-
-        // Sube una foto fragmentada (en bloques de 250KB) a Firestore para evitar el límite de 1MB por documento
-        async function uploadPhotoChunksToCloud(photoId, dataUrl) {
-            await savePhotoToIndexedDB(photoId, dataUrl);
-            if (!currentUser || !db) return;
-
-            // No fragmentar los diagramas SVG cortos por defecto
-            if (dataUrl.startsWith('data:image/svg+xml')) return;
-
-            updateSyncStatusUI('saving', 'Subiendo Foto HD a la Nube...');
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const prefix = getWorkspacePrefix();
-
-            const CHUNK_SIZE = 240000; // ~240 KB por fragmento (muy por debajo del límite de 1MB de Firestore)
-            const totalChunks = Math.ceil(dataUrl.length / CHUNK_SIZE);
-
+        async function pushToCloud() {
             try {
-                for (let i = 0; i < totalChunks; i++) {
-                    const slice = dataUrl.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
-                    const chunkDocId = `${prefix}_${photoId}_chunk_${i}`;
-                    const chunkRef = doc(db, 'artifacts', appId, 'public', 'data', 'makerlab_photo_chunks', chunkDocId);
-                    await setDoc(chunkRef, {
-                        workspaceId: prefix,
-                        photoId: photoId,
-                        chunkIndex: i,
-                        totalChunks: totalChunks,
-                        dataSlice: slice,
-                        updatedAt: Date.now()
-                    });
-                }
-                updateSyncStatusUI('synced', 'Sincronizado en la Nube');
-            } catch (e) {
-                console.warn('Error subiendo fragmentos a la nube:', e);
-                updateSyncStatusUI('local', 'Guardado en IndexedDB Local');
-            }
-        }
-
-        // Sincroniza un proyecto individual en Firestore (almacenando metadatos ligeros y referencias a las fotos)
-        async function syncProjectToCloud(proj) {
-            const prefix = getWorkspacePrefix();
-            await saveProjectsToIndexedDB(prefix, projects);
-
-            if (!currentUser || !db || isApplyingRemoteChanges) return;
-            updateSyncStatusUI('saving', 'Guardando en la Nube...');
-
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            try {
-                // Creamos una copia ligera del proyecto para el documento principal
-                // (Las imágenes pesadas base64 viajan por fragmentos en makerlab_photo_chunks)
-                const lightweightProj = JSON.parse(JSON.stringify(proj));
-                (lightweightProj.photos || []).forEach(ph => {
-                    if (ph.dataUrl && !ph.dataUrl.startsWith('data:image/svg+xml')) {
-                        savePhotoToIndexedDB(ph.id, ph.dataUrl);
-                        if (ph.dataUrl.length > 60000) {
-                            ph.dataUrl = ''; // Se rehidrata desde los fragmentos de la nube
-                        }
-                    }
-                });
-                (lightweightProj.updates || []).forEach(u => {
-                    if (u.photoDataUrl && u.photoId) {
-                        savePhotoToIndexedDB(u.photoId, u.photoDataUrl);
-                        if (u.photoDataUrl.length > 60000) {
-                            u.photoDataUrl = '';
-                        }
-                    }
-                });
-
-                const docId = `${prefix}_${proj.id}`;
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'makerlab_projects', docId);
+                setStatus(false, 'Guardando...');
+                const docRef = doc(db, "laboratorios", currentLabId);
                 await setDoc(docRef, {
-                    workspaceId: prefix,
-                    projectId: proj.id,
-                    projectData: JSON.stringify(lightweightProj),
-                    updatedAt: Date.now()
+                    updatedAt: new Date().toISOString(),
+                    projects: projects
                 });
-                updateSyncStatusUI('synced', 'Sincronizado en la Nube');
+                setStatus(true, 'Nube Conectada');
             } catch (e) {
-                console.warn('Error sincronizando proyecto:', e);
-                updateSyncStatusUI('local', 'Guardado en IndexedDB');
+                console.error(e);
+                alert("Error al guardar en Firebase. Verifica que Firestore esté en 'Modo de Prueba'.");
             }
         }
 
-        async function syncAllProjectsToCloud() {
-            for (const p of projects) {
-                for (const ph of (p.photos || [])) {
-                    if (ph.dataUrl && !ph.dataUrl.startsWith('data:image/svg+xml')) {
-                        await uploadPhotoChunksToCloud(ph.id, ph.dataUrl);
-                    }
-                }
-                await syncProjectToCloud(p);
-            }
-        }
-
-        // ============================================================================
-        // 4. INICIALIZACIÓN Y GESTIÓN DE PROYECTOS EN LA INTERFAZ
-        // ============================================================================
-        window.addEventListener('DOMContentLoaded', async () => {
-            await loadAllPhotosFromIndexedDB();
-            await loadProjectsFromStorage();
-            renderCategoryPills();
-            renderProjects();
-            lucide.createIcons();
-            await initFirebaseCloud();
-        });
-
-        async function loadProjectsFromStorage() {
-            const prefix = getWorkspacePrefix();
-            document.getElementById('current-lab-code').textContent = prefix;
-
-            // Primero intentamos cargar desde IndexedDB (soporta muchos MB sin restricción)
-            const idbProjects = await loadProjectsFromIndexedDB(prefix);
-            if (idbProjects && idbProjects.length > 0) {
-                idbProjects.forEach(p => {
-                    (p.photos || []).forEach(ph => {
-                        if (photoDataCache.has(ph.id)) ph.dataUrl = photoDataCache.get(ph.id);
-                    });
-                });
-                projects = idbProjects;
-                return;
-            }
-
-            projects = JSON.parse(JSON.stringify(INITIAL_PROJECTS));
-            await saveProjectsToIndexedDB(prefix, projects);
-        }
-
-        async function saveProjectsToStorage(specificProject = null) {
-            updateDashboardStats();
-            const prefix = getWorkspacePrefix();
-            await saveProjectsToIndexedDB(prefix, projects);
-
-            if (specificProject) {
-                await syncProjectToCloud(specificProject);
-            } else if (activeProjectId) {
-                const activeProj = projects.find(p => p.id === activeProjectId);
-                if (activeProj) await syncProjectToCloud(activeProj);
-            }
-        }
-
-        // Actualizar contadores superiores
-        function updateDashboardStats() {
-            document.getElementById('stat-total').textContent = projects.length;
-            document.getElementById('stat-completed').textContent = projects.filter(p => p.status === 'Completado').length;
-            document.getElementById('stat-progress').textContent = projects.filter(p => p.status === 'En progreso').length;
-            
-            const totalUpdates = projects.reduce((acc, p) => acc + (p.updates ? p.updates.length : 0), 0);
-            document.getElementById('stat-updates').textContent = totalUpdates;
-        }
-
-        // Renderizar botones de categorías
-        function renderCategoryPills() {
-            const container = document.getElementById('category-pills');
-            container.innerHTML = CATEGORIES.map(cat => {
-                const isSelected = cat === selectedCategory;
-                const activeClasses = isSelected 
-                    ? 'bg-cyan-500 text-slate-950 font-semibold shadow-md shadow-cyan-500/20 border-cyan-400' 
-                    : 'bg-slate-950 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border-slate-800';
-                return `
-                    <button onclick="selectCategory('${cat}')" class="px-3.5 py-1.5 rounded-xl text-xs border transition whitespace-nowrap ${activeClasses}">
-                        ${cat}
-                    </button>
-                `;
-            }).join('');
-        }
-
-        function selectCategory(cat) {
-            selectedCategory = cat;
-            renderCategoryPills();
-            renderProjects();
-        }
-
-        function getStatusBadge(status) {
-            if (status === 'Completado') {
-                return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Completado</span>`;
-            } else if (status === 'En progreso') {
-                return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>En progreso</span>`;
-            }
-            return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-purple-500/15 text-purple-300 border border-purple-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>Idea / Prototipo</span>`;
-        }
-
-        function renderProjects() {
-            updateDashboardStats();
-            const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
-            const statusFilter = document.getElementById('status-filter').value;
-            const grid = document.getElementById('projects-grid');
-
-            const filtered = projects.filter(p => {
-                const matchesCat = selectedCategory === 'Todos' || p.category === selectedCategory;
-                const matchesStatus = statusFilter === 'Todos' || p.status === statusFilter;
-                const matchesSearch = !searchQuery || 
-                    p.title.toLowerCase().includes(searchQuery) ||
-                    p.explanation.toLowerCase().includes(searchQuery) ||
-                    (p.notes && p.notes.toLowerCase().includes(searchQuery)) ||
-                    (p.components && p.components.some(c => c.toLowerCase().includes(searchQuery)));
-                return matchesCat && matchesStatus && matchesSearch;
-            });
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full bg-slate-900/60 border border-slate-800 border-dashed rounded-2xl p-12 text-center space-y-3">
-                        <div class="w-12 h-12 rounded-2xl bg-slate-800/80 text-cyan-400 flex items-center justify-center mx-auto">
-                            <i data-lucide="cpu" class="w-6 h-6"></i>
-                        </div>
-                        <h3 class="text-base font-semibold text-white">No se encontraron proyectos en esta categoría</h3>
-                        <p class="text-xs text-slate-400 max-w-md mx-auto">Cambia el filtro de categoría o registra un nuevo proyecto de electrónica con el botón superior.</p>
-                        <button onclick="openNewProjectModal()" class="mt-2 inline-flex items-center gap-2 bg-cyan-500 text-slate-950 font-semibold px-4 py-2 rounded-xl text-xs">
-                            + Crear Nuevo Proyecto
-                        </button>
-                    </div>
-                `;
-                lucide.createIcons();
-                return;
-            }
-
-            grid.innerHTML = filtered.map(p => {
-                const firstPhotoObj = (p.photos && p.photos.length > 0) ? p.photos[0] : null;
-                const coverPhoto = firstPhotoObj ? (photoDataCache.get(firstPhotoObj.id) || firstPhotoObj.dataUrl || getCircuitSvgDataUrl('ldr-buzzer')) : getCircuitSvgDataUrl('ldr-buzzer');
-                const componentsPreview = (p.components || []).slice(0, 4).map(c => 
-                    `<span class="px-2 py-0.5 bg-slate-950/90 border border-slate-800 rounded-md text-[11px] text-slate-300">${escapeHtml(c)}</span>`
-                ).join('');
-                const extraCompCount = (p.components || []).length > 4 ? `<span class="px-2 py-0.5 bg-slate-800 rounded-md text-[11px] text-cyan-400">+${p.components.length - 4} más</span>` : '';
-                const lastUpdate = (p.updates && p.updates.length > 0) ? p.updates[0] : null;
-
-                return `
-                    <article class="bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 rounded-2xl overflow-hidden flex flex-col shadow-xl transition duration-200 group">
-                        <div class="relative h-52 bg-slate-950 overflow-hidden cursor-pointer" onclick="openProjectDetail('${p.id}', 'overview')">
-                            <img src="${coverPhoto}" alt="${escapeHtml(p.title)}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
-                            
-                            <div class="absolute top-3 left-3 flex flex-wrap gap-2">
-                                <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-slate-950/90 text-cyan-400 border border-cyan-500/30 backdrop-blur-md">
-                                    ${escapeHtml(p.category)}
-                                </span>
-                                ${getStatusBadge(p.status)}
-                            </div>
-
-                            <div class="absolute bottom-3 right-3 flex items-center gap-2">
-                                <span class="px-2.5 py-1 rounded-lg text-xs bg-slate-950/80 text-slate-300 border border-slate-800 flex items-center gap-1 backdrop-blur-md">
-                                    <i data-lucide="camera" class="w-3.5 h-3.5 text-emerald-400"></i> ${(p.photos || []).length}
-                                </span>
-                                <span class="px-2.5 py-1 rounded-lg text-xs bg-slate-950/80 text-slate-300 border border-slate-800 flex items-center gap-1 backdrop-blur-md">
-                                    <i data-lucide="git-commit" class="w-3.5 h-3.5 text-cyan-400"></i> ${(p.updates || []).length}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-                            <div class="space-y-2.5">
-                                <h2 onclick="openProjectDetail('${p.id}', 'overview')" class="text-base sm:text-lg font-bold text-white group-hover:text-cyan-400 transition cursor-pointer leading-snug">
-                                    ${escapeHtml(p.title)}
-                                </h2>
-                                <p class="text-xs sm:text-sm text-slate-300 line-clamp-3 leading-relaxed">
-                                    ${escapeHtml(p.explanation)}
-                                </p>
-
-                                <div class="pt-1 flex flex-wrap gap-1.5">
-                                    ${componentsPreview}
-                                    ${extraCompCount}
-                                </div>
-                            </div>
-
-                            <div class="space-y-3 pt-2 border-t border-slate-800/80">
-                                ${lastUpdate ? `
-                                    <div class="bg-slate-950/80 border border-slate-800/90 rounded-xl p-2.5 text-xs">
-                                        <div class="flex items-center justify-between text-[11px] text-slate-400 mb-0.5">
-                                            <span class="font-semibold text-cyan-400 flex items-center gap-1">
-                                                <i data-lucide="clock" class="w-3 h-3"></i> Último avance:
-                                            </span>
-                                            <span>${escapeHtml(lastUpdate.date)}</span>
-                                        </div>
-                                        <p class="text-slate-300 line-clamp-1 font-medium">${escapeHtml(lastUpdate.title)}</p>
-                                    </div>
-                                ` : ''}
-
-                                <div class="grid grid-cols-3 gap-2 pt-1">
-                                    <button onclick="openProjectDetail('${p.id}', 'overview')" class="flex items-center justify-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 px-2 rounded-xl text-xs font-medium transition">
-                                        <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-400"></i>
-                                        <span>Notas / Código</span>
-                                    </button>
-                                    <button onclick="openProjectDetail('${p.id}', 'updates')" class="flex items-center justify-center gap-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 py-2 px-2 rounded-xl text-xs font-medium transition">
-                                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-                                        <span>Subir Avance</span>
-                                    </button>
-                                    <button onclick="openProjectDetail('${p.id}', 'photos')" class="flex items-center justify-center gap-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 py-2 px-2 rounded-xl text-xs font-medium transition">
-                                        <i data-lucide="camera" class="w-3.5 h-3.5"></i>
-                                        <span>Subir Fotos</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                `;
-            }).join('');
-
-            lucide.createIcons();
-        }
-
-        function openProjectDetail(projectId, initialTab = 'overview') {
-            const proj = projects.find(p => p.id === projectId);
-            if (!proj) return;
-
-            activeProjectId = projectId;
-            document.getElementById('detail-title').textContent = proj.title;
-            document.getElementById('detail-badges').innerHTML = `
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-mono bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">${escapeHtml(proj.category)}</span>
-                ${getStatusBadge(proj.status)}
-                <span class="text-xs text-slate-400 flex items-center gap-1 ml-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Creado: ${escapeHtml(proj.createdAt || 'Hoy')}</span>
-            `;
-
-            document.getElementById('detail-explanation').textContent = proj.explanation;
-            document.getElementById('quick-explanation-textarea').value = proj.explanation;
-            document.getElementById('quick-explanation-editor').classList.add('hidden');
-            document.getElementById('detail-notes-textarea').value = proj.notes || '';
-            document.getElementById('detail-code-textarea').value = proj.code || '';
-
-            renderDetailComponents(proj);
-            renderDetailUpdates(proj);
-            renderDetailPhotos(proj);
-
-            document.getElementById('project-detail-modal').classList.remove('hidden');
-            switchDetailTab(initialTab);
-            lucide.createIcons();
-        }
-
-        function closeDetailModal() {
-            document.getElementById('project-detail-modal').classList.add('hidden');
-            activeProjectId = null;
-        }
-
-        function switchDetailTab(tabName) {
-            const tabs = ['overview', 'updates', 'photos', 'code'];
-            tabs.forEach(t => {
-                const content = document.getElementById(`tab-content-${t}`);
-                const btn = document.getElementById(`tab-btn-${t}`);
-                if (t === tabName) {
-                    content.classList.remove('hidden');
-                    btn.className = 'py-3 px-3 font-medium border-b-2 border-cyan-400 text-cyan-400 flex items-center gap-1.5 whitespace-nowrap';
-                } else {
-                    content.classList.add('hidden');
-                    btn.className = 'py-3 px-3 font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 whitespace-nowrap';
-                }
-            });
-        }
-
-        function toggleQuickEditExplanation() {
-            const editor = document.getElementById('quick-explanation-editor');
-            editor.classList.toggle('hidden');
-        }
-
-        async function saveQuickExplanation() {
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj) return;
-            const newText = document.getElementById('quick-explanation-textarea').value.trim();
-            if (!newText) return;
-
-            proj.explanation = newText;
-            document.getElementById('detail-explanation').textContent = newText;
-            document.getElementById('quick-explanation-editor').classList.add('hidden');
-            await saveProjectsToStorage(proj);
-            renderProjects();
-            showToast('Explicación guardada y sincronizada');
-        }
-
-        function renderDetailComponents(proj) {
-            const container = document.getElementById('detail-components');
-            const list = proj.components || [];
-            if (list.length === 0) {
-                container.innerHTML = `<span class="text-xs text-slate-500">Sin componentes registrados aún.</span>`;
-                return;
-            }
-            container.innerHTML = list.map((comp, idx) => `
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs bg-slate-900 border border-slate-700 text-slate-200">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    ${escapeHtml(comp)}
-                    <button onclick="removeComponent(${idx})" class="text-slate-500 hover:text-rose-400 ml-1" title="Quitar componente">×</button>
-                </span>
-            `).join('');
-        }
-
-        async function addQuickComponent() {
-            const input = document.getElementById('quick-component-input');
-            const val = input.value.trim();
-            if (!val || !activeProjectId) return;
-
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj.components) proj.components = [];
-            proj.components.push(val);
-            input.value = '';
-
-            await saveProjectsToStorage(proj);
-            renderDetailComponents(proj);
-            renderProjects();
-            showToast('Componente añadido');
-        }
-
-        async function removeComponent(idx) {
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj || !proj.components) return;
-            proj.components.splice(idx, 1);
-            await saveProjectsToStorage(proj);
-            renderDetailComponents(proj);
-            renderProjects();
-        }
-
-        async function saveDirectNotes() {
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj) return;
-            proj.notes = document.getElementById('detail-notes-textarea').value;
-            await saveProjectsToStorage(proj);
-            renderProjects();
-            showToast('Notas guardadas y sincronizadas en la nube');
-        }
-
-        async function saveProjectCode() {
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj) return;
-            proj.code = document.getElementById('detail-code-textarea').value;
-            await saveProjectsToStorage(proj);
-            showToast('Código guardado y sincronizado');
-        }
-
-        function copyProjectCode() {
-            const textarea = document.getElementById('detail-code-textarea');
-            textarea.select();
-            document.execCommand('copy');
-            showToast('Código copiado al portapapeles');
-        }
-
-        // ============================================================================
-        // 5. MOTOR DE COMPRESIÓN HD PARA FOTOS DE >5MB / 12MB + BITÁCORA CON FOTOS
-        // ============================================================================
-        function compressImageFile(file, maxDimension = 1280, quality = 0.84) {
-            return new Promise((resolve, reject) => {
+        // Comprimir imágenes pesadas con Canvas para que pesen pocos KB y sincronicen rápido
+        function compressImage(file, maxWidth = 1000, quality = 0.72) {
+            return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const img = new Image();
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-
-                        if (width > height && width > maxDimension) {
-                            height = Math.round((height * maxDimension) / width);
-                            width = maxDimension;
-                        } else if (height >= width && height > maxDimension) {
-                            width = Math.round((width * maxDimension) / height);
-                            height = maxDimension;
+                        let w = img.width;
+                        let h = img.height;
+                        if (w > maxWidth) {
+                            h = Math.round((h * maxWidth) / w);
+                            w = maxWidth;
                         }
-
-                        canvas.width = width;
-                        canvas.height = height;
+                        canvas.width = w;
+                        canvas.height = h;
                         const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-                        resolve(compressedDataUrl);
+                        ctx.drawImage(img, 0, 0, w, h);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
                     };
-                    img.onerror = reject;
                     img.src = e.target.result;
                 };
-                reader.onerror = reject;
                 reader.readAsDataURL(file);
             });
         }
 
-        async function previewUpdatePhoto(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            document.getElementById('update-photo-label').textContent = 'Optimizando foto HD...';
-            pendingUpdatePhotoDataUrl = await compressImageFile(file, 1280, 0.82);
-            document.getElementById('update-photo-label').textContent = `Foto lista: ${file.name.slice(0, 18)}...`;
-            document.getElementById('clear-update-photo-btn').classList.remove('hidden');
-        }
+        window.uploadPhotoToProject = async function(projId, inputEl) {
+            const files = Array.from(inputEl.files);
+            if (!files.length) return;
+            const proj = projects.find(p => p.id === projId);
+            if (!proj) return;
 
-        function clearUpdatePhoto() {
-            pendingUpdatePhotoDataUrl = null;
-            document.getElementById('update-photo-input').value = '';
-            document.getElementById('update-photo-label').textContent = 'Adjuntar foto al avance (Opcional)';
-            document.getElementById('clear-update-photo-btn').classList.add('hidden');
-        }
-
-        function renderDetailUpdates(proj) {
-            const updates = proj.updates || [];
-            document.getElementById('detail-updates-count').textContent = updates.length;
-            const timeline = document.getElementById('detail-updates-timeline');
-
-            if (updates.length === 0) {
-                timeline.innerHTML = `
-                    <div class="text-center py-8 bg-slate-950/40 rounded-xl border border-slate-800/80">
-                        <p class="text-xs text-slate-400">Aún no hay actualizaciones registradas. Usa el formulario de arriba para anotar tu primer avance.</p>
-                    </div>
-                `;
-                return;
+            for (const file of files) {
+                const compressed = await compressImage(file);
+                proj.images = proj.images || [];
+                proj.images.unshift(compressed);
             }
+            await pushToCloud();
+            renderProjects();
+        };
 
-            timeline.innerHTML = updates.map((u, idx) => {
-                const updateImg = (u.photoId && photoDataCache.get(u.photoId)) || u.photoDataUrl || null;
+        window.renderProjects = function() {
+            const grid = document.getElementById('projects-grid');
+            const list = currentFilter === 'Todos' 
+                ? projects 
+                : projects.filter(p => p.category.trim() === currentFilter.trim());
+
+            grid.innerHTML = list.map(p => {
+                const cover = (p.images && p.images.length > 0) 
+                    ? `<img src="${p.images[0]}" class="w-full h-48 object-cover">`
+                    : `<div class="w-full h-48 bg-gray-900 flex flex-col items-center justify-center text-gray-500 border-b border-gray-800">
+                         <i data-lucide="image" class="w-8 h-8 mb-1"></i>
+                         <span class="text-xs font-mono">Sin foto aún (${(p.images||[]).length})</span>
+                       </div>`;
+
                 return `
-                <div class="relative pl-6 pb-4 border-l-2 border-cyan-500/40 last:border-transparent">
-                    <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-slate-900 border-2 border-cyan-400"></div>
-                    <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-4 space-y-2">
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                            <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 text-[11px] font-semibold rounded-md bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">${escapeHtml(u.tag || 'Avance')}</span>
-                                <h5 class="text-sm font-bold text-white">${escapeHtml(u.title)}</h5>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs text-slate-400 font-mono">${escapeHtml(u.date)}</span>
-                                <button onclick="deleteUpdate(${idx})" class="text-slate-500 hover:text-rose-400 text-xs" title="Borrar registro">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                </button>
+                <div class="bg-pcb-800 border border-gray-800 rounded-xl overflow-hidden flex flex-col justify-between hover:border-pcb-accent/50 transition">
+                    <div>
+                        <div class="relative">
+                            ${cover}
+                            <span class="absolute top-2 left-2 bg-black/70 backdrop-blur text-pcb-accent text-xs font-mono px-2.5 py-1 rounded-md border border-pcb-accent/30">
+                                ${p.category}
+                            </span>
+                            <label class="absolute bottom-2 right-2 bg-pcb-emerald hover:bg-emerald-500 text-gray-950 font-semibold text-xs px-3 py-1.5 rounded-lg cursor-pointer flex items-center gap-1 shadow-lg">
+                                <i data-lucide="camera" class="w-3.5 h-3.5"></i> Subir Foto
+                                <input type="file" accept="image/*" multiple class="hidden" onchange="uploadPhotoToProject('${p.id}', this)">
+                            </label>
+                        </div>
+
+                        <div class="p-4">
+                            <h3 class="font-bold text-base mb-1">${p.title}</h3>
+                            <p class="text-xs text-gray-400 line-clamp-2 mb-3">${p.desc}</p>
+                            <div class="flex flex-wrap gap-1 mb-3">
+                                ${(p.components || []).slice(0, 4).map(c => `<span class="text-[11px] bg-gray-900 border border-gray-700 px-2 py-0.5 rounded font-mono text-gray-300">${c}</span>`).join('')}
                             </div>
                         </div>
-                        <p class="text-xs sm:text-sm text-slate-300 whitespace-pre-line leading-relaxed">${escapeHtml(u.description)}</p>
-                        ${updateImg ? `
-                            <div class="pt-2">
-                                <img src="${updateImg}" alt="Foto de avance" class="max-h-56 rounded-lg border border-slate-800 object-contain bg-black">
-                            </div>
-                        ` : ''}
                     </div>
-                </div>
-            `}).join('');
-            lucide.createIcons();
-        }
 
-        async function addProjectUpdate() {
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj) return;
-
-            const titleInput = document.getElementById('update-title-input');
-            const descInput = document.getElementById('update-desc-input');
-            const tagInput = document.getElementById('update-tag-input');
-
-            const title = titleInput.value.trim();
-            const desc = descInput.value.trim();
-
-            if (!title || !desc) {
-                showToast('Escribe un título y una descripción para tu avance', 'error');
-                return;
-            }
-
-            const now = new Date();
-            const formattedDate = now.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }) + ' - ' + now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
-
-            const newUpdate = {
-                id: 'upd-' + Date.now(),
-                date: formattedDate,
-                tag: tagInput.value,
-                title: title,
-                description: desc
-            };
-
-            if (pendingUpdatePhotoDataUrl) {
-                const photoId = 'updphoto-' + Date.now();
-                newUpdate.photoId = photoId;
-                newUpdate.photoDataUrl = pendingUpdatePhotoDataUrl;
-                await uploadPhotoChunksToCloud(photoId, pendingUpdatePhotoDataUrl);
-                clearUpdatePhoto();
-            }
-
-            if (!proj.updates) proj.updates = [];
-            proj.updates.unshift(newUpdate);
-
-            titleInput.value = '';
-            descInput.value = '';
-
-            await saveProjectsToStorage(proj);
-            renderDetailUpdates(proj);
-            renderProjects();
-            showToast('¡Avance publicado y sincronizado en la nube!');
-        }
-
-        async function deleteUpdate(idx) {
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj || !proj.updates) return;
-            proj.updates.splice(idx, 1);
-            await saveProjectsToStorage(proj);
-            renderDetailUpdates(proj);
-            renderProjects();
-            showToast('Registro eliminado de la bitácora');
-        }
-
-        function renderDetailPhotos(proj) {
-            const photos = proj.photos || [];
-            document.getElementById('detail-photos-count').textContent = photos.length;
-            const grid = document.getElementById('detail-photos-grid');
-
-            if (photos.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-10 bg-slate-950/40 rounded-xl border border-slate-800 border-dashed">
-                        <p class="text-xs text-slate-400">No hay fotos cargadas. Pulsa "Subir Fotos (Múltiples)" para agregar tus imágenes de cualquier tamaño.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            grid.innerHTML = photos.map((ph, idx) => {
-                const imgSrc = photoDataCache.get(ph.id) || ph.dataUrl || getCircuitSvgDataUrl('ldr-buzzer');
-                return `
-                <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden flex flex-col justify-between group">
-                    <div class="relative h-60 bg-black flex items-center justify-center overflow-hidden">
-                        <img src="${imgSrc}" alt="Foto del circuito" class="w-full h-full object-contain">
-                        <button onclick="deletePhoto(${idx})" class="absolute top-2 right-2 bg-slate-900/90 hover:bg-rose-600 text-white p-1.5 rounded-lg opacity-90 transition" title="Eliminar foto">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    <div class="px-4 py-3 bg-gray-900/60 border-t border-gray-800 flex justify-between items-center">
+                        <button onclick="openDetailModal('${p.id}')" class="text-xs font-mono text-pcb-accent hover:underline flex items-center gap-1">
+                            <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Bitácora / Notas (${(p.logs||[]).length})
                         </button>
-                        ${idx === 0 ? `<span class="absolute top-2 left-2 bg-emerald-500 text-slate-950 font-bold text-[10px] uppercase px-2 py-0.5 rounded-md">Portada Principal</span>` : `
-                            <button onclick="setAsCoverPhoto(${idx})" class="absolute top-2 left-2 bg-slate-900/85 hover:bg-cyan-500 hover:text-slate-950 text-xs text-slate-200 px-2.5 py-1 rounded-lg transition">
-                                Usar como portada
-                            </button>
-                        `}
+                        <div class="flex gap-2">
+                            <button onclick="editProject('${p.id}')" class="text-gray-400 hover:text-white"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                            <button onclick="deleteProject('${p.id}')" class="text-gray-400 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
                     </div>
-                    <div class="p-3 space-y-2">
-                        <input type="text" value="${escapeHtml(ph.caption || '')}" onchange="updatePhotoCaption(${idx}, this.value)" placeholder="Añade una explicación o nota sobre esta foto..." class="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none">
+                </div>`;
+            }).join('');
+            lucide.createIcons();
+        };
+
+        window.openDetailModal = function(id) {
+            const p = projects.find(x => x.id === id);
+            if (!p) return;
+            const modal = document.getElementById('detail-modal');
+            const content = document.getElementById('detail-content');
+
+            content.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <span class="text-xs font-mono text-pcb-accent">${p.category}</span>
+                        <h2 class="text-xl font-bold">${p.title}</h2>
+                    </div>
+                    <button onclick="document.getElementById('detail-modal').classList.add('hidden')" class="text-gray-400 hover:text-white"><i data-lucide="x"></i></button>
+                </div>
+
+                ${(p.images && p.images.length) ? `
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+                    ${p.images.map((img, idx) => `
+                        <div class="relative group">
+                            <img src="${img}" class="h-32 w-full object-cover rounded-lg border border-gray-700">
+                            <button onclick="removePhoto('${p.id}', ${idx})" class="absolute top-1 right-1 bg-red-600 text-white p-1 rounded opacity-80 hover:opacity-100 text-xs">✕</button>
+                        </div>
+                    `).join('')}
+                </div>` : ''}
+
+                <p class="text-sm text-gray-300 mb-4">${p.desc}</p>
+
+                <div class="mb-4">
+                    <h4 class="text-xs font-mono text-gray-400 uppercase mb-1">Notas Técnicas / Código</h4>
+                    <pre class="bg-gray-950 border border-gray-800 rounded-lg p-3 text-xs font-mono text-emerald-400 overflow-x-auto">${p.notes || 'Sin código registrado.'}</pre>
+                </div>
+
+                <div class="border-t border-gray-700 pt-4">
+                    <h4 class="text-xs font-mono text-pcb-accent uppercase mb-2">Bitácora de Avances</h4>
+                    <div class="flex gap-2 mb-3">
+                        <input id="new-log-input" type="text" placeholder="Escribe un nuevo avance o cambio..." class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-sm">
+                        <button onclick="addLog('${p.id}')" class="bg-pcb-emerald text-gray-950 font-semibold px-4 py-1.5 rounded-lg text-xs">Añadir</button>
+                    </div>
+                    <div class="space-y-2 max-h-48 overflow-y-auto">
+                        ${(p.logs || []).map(l => `
+                            <div class="bg-gray-900/80 border border-gray-800 rounded-lg p-2.5 text-xs">
+                                <span class="text-pcb-accent font-mono mr-2">[${l.date}]</span>
+                                <span class="text-gray-200">${l.text}</span>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
-            `}).join('');
+            `;
+            modal.classList.remove('hidden');
             lucide.createIcons();
-        }
+        };
 
-        async function handlePhotoUpload(event) {
-            const files = Array.from(event.target.files);
-            if (!files.length || !activeProjectId) return;
+        window.addLog = async function(id) {
+            const input = document.getElementById('new-log-input');
+            if (!input.value.trim()) return;
+            const p = projects.find(x => x.id === id);
+            p.logs = p.logs || [];
+            p.logs.unshift({ date: new Date().toLocaleString(), text: input.value.trim() });
+            await pushToCloud();
+            openDetailModal(id);
+        };
 
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj.photos) proj.photos = [];
+        window.removePhoto = async function(projId, idx) {
+            const p = projects.find(x => x.id === projId);
+            p.images.splice(idx, 1);
+            await pushToCloud();
+            openDetailModal(projId);
+        };
 
-            const maxDim = parseInt(document.getElementById('photo-quality-select').value || '1280', 10);
-            const statusEl = document.getElementById('photo-upload-status');
-
-            // Si solo tenía el diagrama SVG de fábrica, lo quitamos al subir tus fotos reales
-            if (proj.photos.length === 1 && proj.photos[0].id.startsWith('img-default-')) {
-                proj.photos = [];
-            }
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const originalSizeMB = (file.size / (1024 * 1024)).toFixed(1);
-                if (statusEl) statusEl.textContent = `Procesando foto ${i + 1}/${files.length} (${originalSizeMB}MB)...`;
-
-                try {
-                    const compressedDataUrl = await compressImageFile(file, maxDim, 0.84);
-                    const photoId = 'photo-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
-
-                    const newPhotoObj = {
-                        id: photoId,
-                        caption: file.name.replace(/\.[^/.]+$/, ""),
-                        dataUrl: compressedDataUrl,
-                        date: new Date().toLocaleDateString('es-MX')
-                    };
-
-                    proj.photos.unshift(newPhotoObj);
-                    await uploadPhotoChunksToCloud(photoId, compressedDataUrl);
-                } catch (err) {
-                    console.error('Error procesando imagen:', err);
-                }
-            }
-
-            if (statusEl) statusEl.textContent = `¡${files.length} foto(s) sincronizadas en HD!`;
-            setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 4000);
-
-            await saveProjectsToStorage(proj);
-            renderDetailPhotos(proj);
-            renderProjects();
-            showToast(`${files.length} foto(s) guardadas en IndexedDB y sincronizadas en la nube`);
-            event.target.value = '';
-        }
-
-        async function updatePhotoCaption(idx, newCaption) {
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj || !proj.photos[idx]) return;
-            proj.photos[idx].caption = newCaption;
-            await saveProjectsToStorage(proj);
-            showToast('Descripción de foto actualizada');
-        }
-
-        async function setAsCoverPhoto(idx) {
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj || !proj.photos[idx]) return;
-            const [selected] = proj.photos.splice(idx, 1);
-            proj.photos.unshift(selected);
-            await saveProjectsToStorage(proj);
-            renderDetailPhotos(proj);
-            renderProjects();
-            showToast('Portada del proyecto actualizada');
-        }
-
-        async function deletePhoto(idx) {
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj || !proj.photos) return;
-            proj.photos.splice(idx, 1);
-            await saveProjectsToStorage(proj);
-            renderDetailPhotos(proj);
-            renderProjects();
-            showToast('Foto eliminada');
-        }
-
-        // ============================================================================
-        // 6. MODALES DE FORMULARIO Y VINCULACIÓN DE CÓDIGO DE LABORATORIO EN LA NUBE
-        // ============================================================================
-        function openCloudSyncModal() {
-            document.getElementById('workspace-id-input').value = getWorkspacePrefix();
-            document.getElementById('cloud-sync-modal').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function closeCloudSyncModal() {
-            document.getElementById('cloud-sync-modal').classList.add('hidden');
-        }
-
-        async function changeWorkspaceId() {
-            const input = document.getElementById('workspace-id-input').value.trim().toUpperCase();
-            if (!input) return;
-            currentWorkspaceId = input;
-            document.getElementById('current-lab-code').textContent = getWorkspacePrefix();
-            await loadProjectsFromStorage();
-            renderProjects();
-            subscribeToCloudWorkspace();
-            closeCloudSyncModal();
-            showToast(`Conectado al espacio en la nube: ${getWorkspacePrefix()}`);
-        }
-
-        function openNewProjectModal() {
-            document.getElementById('form-project-id').value = '';
-            document.getElementById('form-modal-title').innerHTML = `<i data-lucide="folder-plus" class="w-5 h-5 text-cyan-400"></i><span>Crear Nuevo Proyecto</span>`;
+        window.openNewProjectModal = function() {
             document.getElementById('project-form').reset();
-            document.getElementById('project-form-modal').classList.remove('hidden');
-            lucide.createIcons();
-        }
+            document.getElementById('proj-id').value = '';
+            document.getElementById('modal-title').textContent = 'Nuevo Proyecto';
+            document.getElementById('project-modal').classList.remove('hidden');
+        };
 
-        function openEditCurrentProject() {
-            const proj = projects.find(p => p.id === activeProjectId);
-            if (!proj) return;
+        window.closeProjectModal = function() {
+            document.getElementById('project-modal').classList.add('hidden');
+        };
 
-            document.getElementById('form-project-id').value = proj.id;
-            document.getElementById('form-modal-title').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-cyan-400"></i><span>Editar Proyecto</span>`;
-            document.getElementById('form-title').value = proj.title;
-            document.getElementById('form-category').value = proj.category;
-            document.getElementById('form-status').value = proj.status;
-            document.getElementById('form-components').value = (proj.components || []).join(', ');
-            document.getElementById('form-explanation').value = proj.explanation;
-            document.getElementById('form-notes').value = proj.notes || '';
+        window.editProject = function(id) {
+            const p = projects.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('proj-id').value = p.id;
+            document.getElementById('proj-title').value = p.title;
+            document.getElementById('proj-category').value = p.category;
+            document.getElementById('proj-desc').value = p.desc;
+            document.getElementById('proj-components').value = (p.components || []).join(', ');
+            document.getElementById('proj-notes').value = p.notes || '';
+            document.getElementById('modal-title').textContent = 'Editar Proyecto';
+            document.getElementById('project-modal').classList.remove('hidden');
+        };
 
-            document.getElementById('project-form-modal').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function closeFormModal() {
-            document.getElementById('project-form-modal').classList.add('hidden');
-        }
-
-        async function saveProjectForm(event) {
-            event.preventDefault();
-            const id = document.getElementById('form-project-id').value;
-            const title = document.getElementById('form-title').value.trim();
-            const category = document.getElementById('form-category').value;
-            const status = document.getElementById('form-status').value;
-            const componentsRaw = document.getElementById('form-components').value;
-            const explanation = document.getElementById('form-explanation').value.trim();
-            const notes = document.getElementById('form-notes').value.trim();
-
-            const components = componentsRaw
-                .split(',')
-                .map(c => c.trim())
-                .filter(Boolean);
+        window.saveProjectFromModal = async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('proj-id').value;
+            const title = document.getElementById('proj-title').value;
+            const category = document.getElementById('proj-category').value;
+            const desc = document.getElementById('proj-desc').value;
+            const components = document.getElementById('proj-components').value.split(',').map(s => s.trim()).filter(Boolean);
+            const notes = document.getElementById('proj-notes').value;
 
             if (id) {
-                const proj = projects.find(p => p.id === id);
-                if (proj) {
-                    proj.title = title;
-                    proj.category = category;
-                    proj.status = status;
-                    proj.components = components;
-                    proj.explanation = explanation;
-                    proj.notes = notes;
-                    await saveProjectsToStorage(proj);
-                }
-                closeFormModal();
-                renderProjects();
-                if (activeProjectId === id) {
-                    openProjectDetail(id, 'overview');
-                }
-                showToast('Datos del proyecto actualizados');
+                const p = projects.find(x => x.id === id);
+                Object.assign(p, { title, category, desc, components, notes });
             } else {
-                const newProj = {
+                projects.unshift({
                     id: 'proj-' + Date.now(),
-                    title,
-                    category,
-                    status,
-                    createdAt: new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }),
-                    components,
-                    explanation,
-                    notes,
-                    code: '// Escribe o pega aquí el código de tu proyecto\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}',
-                    photos: [],
-                    updates: [
-                        {
-                            id: 'upd-' + Date.now(),
-                            date: new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }),
-                            tag: 'Avance',
-                            title: 'Proyecto registrado en la bitácora',
-                            description: 'Inicio de la documentación y lista de materiales.'
-                        }
-                    ]
-                };
-                projects.unshift(newProj);
-                await saveProjectsToStorage(newProj);
-                closeFormModal();
-                renderProjects();
-                openProjectDetail(newProj.id, 'overview');
-                showToast('¡Nuevo proyecto creado y sincronizado!');
-            }
-        }
-
-        async function deleteCurrentProject() {
-            if (!activeProjectId) return;
-            const deletedId = activeProjectId;
-            projects = projects.filter(p => p.id !== deletedId);
-            await saveProjectsToIndexedDB(getWorkspacePrefix(), projects);
-
-            if (currentUser && db) {
-                try {
-                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                    const docId = `${getWorkspacePrefix()}_${deletedId}`;
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'makerlab_projects', docId));
-                } catch (e) {}
-            }
-
-            closeDetailModal();
-            renderProjects();
-            showToast('Proyecto eliminado');
-        }
-
-        function exportBackup() {
-            // Hidratar todas las fotos desde caché antes de exportar el respaldo JSON
-            const fullExport = JSON.parse(JSON.stringify(projects));
-            fullExport.forEach(p => {
-                (p.photos || []).forEach(ph => {
-                    if (photoDataCache.has(ph.id)) ph.dataUrl = photoDataCache.get(ph.id);
+                    title, category, desc, components, notes,
+                    images: [],
+                    logs: [{ date: new Date().toLocaleDateString(), text: 'Proyecto creado.' }]
                 });
-            });
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullExport, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `respaldo_makerlab_${getWorkspacePrefix()}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            showToast('Respaldo JSON descargado correctamente');
-        }
+            }
+            closeProjectModal();
+            await pushToCloud();
+        };
 
-        function importBackup(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (Array.isArray(imported)) {
-                        projects = imported;
-                        for (const p of projects) {
-                            for (const ph of (p.photos || [])) {
-                                if (ph.dataUrl) await savePhotoToIndexedDB(ph.id, ph.dataUrl);
-                            }
-                        }
-                        await saveProjectsToIndexedDB(getWorkspacePrefix(), projects);
-                        renderProjects();
-                        await syncAllProjectsToCloud();
-                        showToast('¡Proyectos y fotos restaurados y sincronizados en la nube!');
-                    } else {
-                        showToast('El archivo no tiene el formato correcto', 'error');
-                    }
-                } catch (err) {
-                    showToast('Error al leer el archivo de respaldo', 'error');
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
+        window.deleteProject = async function(id) {
+            if (!confirm('¿Eliminar este proyecto permanentemente?')) return;
+            projects = projects.filter(x => x.id !== id);
+            await pushToCloud();
+        };
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const colorClass = type === 'error' 
-                ? 'bg-rose-950 border-rose-500 text-rose-200' 
-                : 'bg-slate-900 border-cyan-400 text-white';
+        window.filterProjects = function(cat) {
+            currentFilter = cat;
+            renderProjects();
+        };
 
-            toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-2xl text-xs font-medium transition transform duration-300 ${colorClass}`;
-            toast.innerHTML = `
-                <span class="w-2 h-2 rounded-full ${type === 'error' ? 'bg-rose-400' : 'bg-cyan-400'}"></span>
-                <span>${escapeHtml(message)}</span>
-            `;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
+        window.changeLabId = function(newId) {
+            currentLabId = newId.trim().toUpperCase() || 'LAB-PRINCIPAL';
+            localStorage.setItem('makerlab_id', currentLabId);
+            subscribeToCloud(currentLabId);
+        };
 
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
+        window.exportBackup = function() {
+            const blob = new Blob([JSON.stringify(projects, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `respaldo-${currentLabId}.json`;
+            a.click();
+        };
 
-        // Exponer funciones al ámbito global para los botones HTML onclick
-        Object.assign(window, {
-            openNewProjectModal,
-            closeFormModal,
-            saveProjectForm,
-            openProjectDetail,
-            closeDetailModal,
-            switchDetailTab,
-            toggleQuickEditExplanation,
-            saveQuickExplanation,
-            addQuickComponent,
-            removeComponent,
-            saveDirectNotes,
-            saveProjectCode,
-            copyProjectCode,
-            addProjectUpdate,
-            deleteUpdate,
-            handlePhotoUpload,
-            updatePhotoCaption,
-            setAsCoverPhoto,
-            deletePhoto,
-            openEditCurrentProject,
-            deleteCurrentProject,
-            selectCategory,
-            renderProjects,
-            exportBackup,
-            importBackup,
-            openCloudSyncModal,
-            closeCloudSyncModal,
-            changeWorkspaceId,
-            previewUpdatePhoto,
-            clearUpdatePhoto
-        });
+        // Iniciar aplicación
+        lucide.createIcons();
+        subscribeToCloud(currentLabId);
     </script>
 </body>
 </html>
